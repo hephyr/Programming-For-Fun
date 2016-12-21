@@ -87,3 +87,10 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+#picture
+*.gif
+*.png
+*.jpeg
+*.jpg
+.DS_Store
