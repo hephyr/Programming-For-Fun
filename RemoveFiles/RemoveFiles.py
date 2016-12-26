@@ -28,12 +28,12 @@ def fileExists(args):
     return True
 
 
-def deleteFiles(files):
-    if isinstance(files, (list, tuple)):
-        for f in files:
-            shutil.move(f, Trash)
-    else:
-        shutil.move(files, Trash)
+def deleteFile(f):
+    try:
+        shutil.move(f, os.path.join(Trash, f))
+    except IOError:
+        pass
+        # not finish
 
 
 def removeFiles(recursion, force, cat, files):
@@ -45,7 +45,8 @@ def removeFiles(recursion, force, cat, files):
     if cat:
         deepFirstSearch(files)
     else:
-        deleteFiles(files)
+        for f in files:
+            deleteFile(f)
 
 
 def deepFirstSearch(files):
@@ -59,11 +60,13 @@ def deepFirstSearch(files):
                 if not os.listdir(f):
                     re = raw_input('remove %s?' % f)
                     if re == 'y' or re == 'Y':
-                        deleteFiles(f)
+                        os.removedirs(f)
         else:
+            if isImg(f) and os.path.exists('/usr/local/bin/imgcat'):
+                os.system('imgcat %s' % f)
             re = raw_input('remove %s?' % f)
             if re == 'y' or re == 'Y':
-                deleteFiles(f)
+                deleteFile(f)
 
 
 def main():
@@ -71,7 +74,7 @@ def main():
     force = True
     cat = False
     opts, args = getopt(argv[1:], "rfih", ["help"])
-    if len(argv) == 1 and len(args) == 0 and not fileExists(args):
+    if len(argv) == 1 or len(args) == 0 or not fileExists(args):
         print(usage)
         exit(1)
     if not os.path.exists(Trash):
