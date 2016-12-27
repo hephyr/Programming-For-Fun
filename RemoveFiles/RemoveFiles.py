@@ -32,8 +32,9 @@ def deleteFile(f):
     try:
         shutil.move(f, os.path.join(Trash, f))
     except IOError:
-        pass
-        # not finish
+        path, name = os.path.split(f)
+        os.makedirs(os.path.join(Trash, path))
+        shutil.move(f, os.path.join(Trash, f))
 
 
 def removeFiles(recursion, force, cat, files):
@@ -88,7 +89,7 @@ def main():
             cat = True
             force = False
         if o == '-h' or o == '--help':
-            print usage
+            print(usage)
     removeFiles(recursion, force, cat, args)
 
 if __name__ == '__main__':
