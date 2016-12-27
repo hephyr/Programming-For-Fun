@@ -6,6 +6,7 @@ import shutil
 from sys import argv
 from getopt import getopt
 from imghdr import what
+from future.builtins import input
 
 usage = 'usage: rm [-f|-i] [-r] file ...'
 Trash = os.path.expanduser('~/.Trash')
@@ -54,18 +55,18 @@ def deepFirstSearch(files):
     while files:
         f = files.pop()
         if os.path.isdir(f) and os.listdir(f):
-            examine = raw_input('examine files in directory %s?' % f)
+            examine = input('examine files in directory %s?' % f)
             if examine == 'y' or examine == 'Y':
                 dir_files = [os.path.join(f, x) for x in os.listdir(f)]
                 deepFirstSearch(dir_files)
                 if not os.listdir(f):
-                    re = raw_input('remove %s?' % f)
+                    re = input('remove %s?' % f)
                     if re == 'y' or re == 'Y':
                         os.removedirs(f)
         else:
             if isImg(f) and os.path.exists('/usr/local/bin/imgcat'):
                 os.system('imgcat %s' % f)
-            re = raw_input('remove %s?' % f)
+            re = input('remove %s?' % f)
             if re == 'y' or re == 'Y':
                 deleteFile(f)
 
