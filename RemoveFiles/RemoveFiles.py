@@ -36,11 +36,11 @@ def fileExists(args):
 
 def deleteFile(f):
     try:
-        shutil.move(f, os.path.join(Trash, f))
+        shutil.move(f, Trash)
     except IOError:
         path, name = os.path.split(f)
         os.makedirs(os.path.join(Trash, path))
-        shutil.move(f, os.path.join(Trash, f))
+        shutil.move(f, Trash)
     except shutil.Error:
         now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         filename = '%s-%s' % (f, now)
@@ -50,9 +50,17 @@ def deleteFile(f):
 def removeFiles(recursion, force, cat, files):
     if not recursion:
         for f in files:
-            if os.path.isdir(f):
+            if os.path.isdir(f) and os.listdir(f):
                 print('rm: %s: Is a directory' % f)
                 exit(1)
+    for f in files[:]:
+        abspath = os.path.abspath(f)
+        if abspath.find(Trash) == 0:
+            if os.path.isdir(f):
+                shutil.rmtree(f)
+            else:
+                os.remove(f)
+            files.remove(f)
     if cat:
         deepFirstSearch(files)
     else:
