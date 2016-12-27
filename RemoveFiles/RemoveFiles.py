@@ -2,11 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import os
+import time
 import shutil
 from sys import argv
 from getopt import getopt
 from imghdr import what
-from future.builtins import input
+try:
+    from future.builtins import input
+except ImportError:
+    pass
+
 
 usage = 'usage: rm [-f|-i] [-r] file ...'
 Trash = os.path.expanduser('~/.Trash')
@@ -36,6 +41,10 @@ def deleteFile(f):
         path, name = os.path.split(f)
         os.makedirs(os.path.join(Trash, path))
         shutil.move(f, os.path.join(Trash, f))
+    except shutil.Error:
+        now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        filename = '%s-%s' % (f, now)
+        shutil.move(f, os.path.join(Trash, filename))
 
 
 def removeFiles(recursion, force, cat, files):
