@@ -34,17 +34,20 @@ def fileExists(args):
     return True
 
 
-def deleteFile(f):
+def deleteFile(f, trash_dir=''):
+    trash_dir = os.path.join(Trash, trash_dir)
     try:
-        shutil.move(f, Trash)
+        shutil.move(f, trash_dir)
     except IOError:
         path, name = os.path.split(f)
-        os.makedirs(os.path.join(Trash, path))
-        shutil.move(f, Trash)
+        os.makedirs(os.path.join(trash_dir, path))
+        shutil.move(f, trash_dir)
     except shutil.Error:
-        now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        filename = '%s-%s' % (f, now)
-        shutil.move(f, os.path.join(Trash, filename))
+        now = time.strftime("%Y%m%d-%H:%M:%S", time.localtime())
+        fn = os.path.split(f)[-1]
+        fn, ext = os.path.splitext(fn)
+        filename = '%s-%s%s' % (fn, now, ext)
+        shutil.move(f, os.path.join(trash_dir, filename))
 
 
 def removeFiles(recursion, force, cat, files):
