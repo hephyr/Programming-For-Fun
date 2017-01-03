@@ -85,7 +85,8 @@ def deepFirstSearch(files):
                         os.removedirs(f)
         else:
             if isImg(f) and os.path.exists('/usr/local/bin/imgcat'):
-                os.system('imgcat %s' % f)
+                fname = f.replace(' ', '\\ ')
+                os.system('imgcat %s' % fname)
             re = input('remove %s?' % f)
             if re == 'y' or re == 'Y':
                 deleteFile(f)
