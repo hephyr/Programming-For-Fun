@@ -9,7 +9,19 @@ from multiprocessing.dummy import Pool
 from bs4 import BeautifulSoup
 
 
+def loop(func):
+    def bar(*args, **kwargs):
+        while True:
+            try:
+                result = func(*args, **kwargs)
+                break
+            except BaseException:
+                pass
+        return result
+    return bar
 
+
+@loop
 def getTitle(av):
     url = 'http://www.bilibili.com/video/av%s/' % av
     r = requests.get(url)
@@ -22,6 +34,7 @@ def getTitle(av):
         return str(soup.title), False
 
 
+@loop
 def getStat(av):
     url = 'http://api.bilibili.com/archive_stat/stat?aid=%s' % av
     r = requests.get(url)
@@ -66,7 +79,7 @@ def main():
     #p.map(spider, range(begin, 7000))
     #p.close()
     #p.join()
-    for i in range(begin, 7000):
+    for i in range(begin, 8000000):
         spider(i)
 
 if __name__=='__main__':
