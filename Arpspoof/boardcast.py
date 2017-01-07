@@ -2,7 +2,16 @@
 # -*- coding: utf-8 -*-
 
 
-from scapy.all import get_if_hwaddr, getmacbyip, ARP, Ether, sendp, sr1
+from scapy.all import (
+    get_if_hwaddr,
+    getmacbyip,
+    ARP,
+    Ether,
+    sendp,
+    sr1,
+    IP,
+    ICMP
+)
 
 def sendPkg(pkg):
     sendp(pkg, inter=2, iface='eth0')
