@@ -13,6 +13,7 @@ use_help = '''getwallpaper [-h] source'''
 def blur(filename, path=os.curdir, out_width=2560, out_hight=1440, *args):
     img = Image.open(filename).convert('RGBA')
     width, hight = img.size
+    # 制作高斯模糊背景
     if float(width)/hight > 16.0/9:
         w = hight * 16.0/9
         out = img.crop((width/2 - w/2, 0, width/2 + w/2, hight))
@@ -21,7 +22,20 @@ def blur(filename, path=os.curdir, out_width=2560, out_hight=1440, *args):
         out = img.crop((0, hight/2 - h/2, width, hight/2 + h/2))
     out = out.resize((out_width, out_hight))
     out = out.filter(ImageFilter.GaussianBlur(radius=66))
-    out.paste(img, (out_width/2 - width/2, out_hight/2 - hight/2))
+    # 将原图粘贴在背景图中心
+    # 如果原图过大，则对图片进行调整(好像还有Bug)
+    k = 1
+    if width > out_width:
+        change_width = out_width - 60
+        k = float(change_width) / width
+    elif hight > out_hight:
+        change_hight = out_hight - 60
+        k = float(change_hight) / hight
+    out_img_hight = int(k * hight)
+    out_img_width = int(k * width)
+    img = img.resize((out_img_width, out_img_hight))
+    out.paste(img, (out_width/2 - out_img_width/2, out_hight/2 - out_img_hight/2))
+    ## 输出
     out_name = os.path.join(path, os.path.splitext(filename)[0]+'_BLUR.jpg')
     out.save(out_name, 'jpeg')
 
